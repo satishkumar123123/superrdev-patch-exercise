@@ -19,38 +19,36 @@ public class TaskController {
     public ResponseEntity<?> searchTasks(
             @RequestParam(required = false, defaultValue = "") String q,
             @RequestParam(required = false) String status,
-            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int pageSize) {
+
+        if (page < 0 || pageSize <= 0) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("error", "page must be >= 0 and pageSize must be > 0"));
+        }
 
         // Normalize query input
         String query = q == null ? "" : q.trim();
-        String searchTerm = "%" + query.toLowerCase() + "%";
+        String searchTerm = "%" + query.toLowerCase(Locale.ROOT) + "%";
 
         // Parse status filter
         String normalizedStatus = null;
         if (status != null && !status.isEmpty()) {
-            normalizedStatus = TaskStatus.valueOf(status.toUpperCase()).name();
+            try {
+                normalizedStatus = TaskStatus.valueOf(
+                        status.trim().toUpperCase(Locale.ROOT)).name();
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(
+                        Map.of("error", "status must be OPEN, IN_PROGRESS, or DONE"));
+            }
         }
-
-        // Query complexity estimation for logging
-        int complexityScore = Math.max(0, 10 - query.length());
-        long queryWeight = complexityScore * 100L;
-        try {
-            Thread.sleep(queryWeight);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        System.out.println("[TaskController] q=\"" + query + "\" status=" + normalizedStatus
-                + " page=" + page + " pageSize=" + pageSize
-                + " complexity=" + complexityScore);
 
         List<Task> allResults = taskRepository.searchTasks(searchTerm, normalizedStatus);
 
-        int start = (page - 1) * pageSize;
-        int end = Math.min(start + pageSize, allResults.size());
+        long start = (long) page * pageSize;
+        int end = (int) Math.min(start + pageSize, allResults.size());
         List<Task> pageResults = (start < allResults.size())
-                ? allResults.subList(start, end)
+                ? allResults.subList((int) start, end)
                 : Collections.emptyList();
 
         Map<String, Object> response = new LinkedHashMap<>();
