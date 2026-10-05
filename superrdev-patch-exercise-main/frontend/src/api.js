@@ -2,7 +2,8 @@ const API_BASE = '/api';
 
 export async function fetchTasks({ query = '', status = '', page = 0, pageSize = 10, signal }) {
   const params = new URLSearchParams();
-  if (query) params.set('q', query);
+  const normalizedQuery = query.trim();
+  if (normalizedQuery) params.set('q', normalizedQuery);
   if (status) params.set('status', status);
   params.set('page', String(page));
   params.set('pageSize', String(pageSize));

@@ -29,13 +29,13 @@ export default function App() {
 
       {totalPages > 1 && (
         <div className="pagination">
-          <button disabled={page <= 0} onClick={() => setPage((p) => p - 1)}>
+          <button disabled={loading || !!error || page <= 0} onClick={() => setPage((p) => p - 1)}>
             Previous
           </button>
           <span>
             Page {page + 1} of {totalPages}
           </span>
-          <button disabled={page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>
+          <button disabled={loading || !!error || page >= totalPages - 1} onClick={() => setPage((p) => p + 1)}>
             Next
           </button>
         </div>

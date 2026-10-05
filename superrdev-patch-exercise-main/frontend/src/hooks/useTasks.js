@@ -4,7 +4,7 @@ import { fetchTasks } from '../api';
 export function useTasks(query, status, page, pageSize) {
   const [tasks, setTasks] = useState([]);
   const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -32,8 +32,11 @@ export function useTasks(query, status, page, pageSize) {
       }
     }
 
-    loadTasks();
-    return () => controller.abort();
+    const timeoutId = setTimeout(loadTasks, 250);
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, [query, status, page, pageSize]);
 
   return { tasks, total, loading, error };
