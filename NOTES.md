@@ -21,10 +21,10 @@
 ### 4. Artificial Delay & Input Validation
 - What: Hardcoded `Thread.sleep()` artificially delayed search requests; invalid parameters threw 500 errors.
 - Found: Traced query complexity logic in TaskController.
-- Changed: Removed Thread.sleep; added explicit 400 Bad Request responses for negative pages and invalid TaskStatus enums.
+- Changed: Removed Thread.sleep; added explicit 400 Bad Request responses for negative pages, nonpositive pageSize, and invalid TaskStatus enums.
 - Why: Drops artificial latency to 0ms and provides deterministic HTTP error contracts.
 
 ### 5. Final Audit
 - Added debounce/trim, loading/error button guards, loopback CORS, stable ordering, and executable wrapper.
 - Verified both builds, live API/H2, and React integration.
-- Deferred database pagination; load-all queries remain a scaling risk. Used ChatGPT for review/fixes and test tooling.
+- Deferred database pagination to keep the patch focused; load-all queries remain a scaling risk. Used ChatGPT for review/fixes and test tooling.

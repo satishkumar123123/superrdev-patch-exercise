@@ -98,7 +98,7 @@ cd backend
 
 On Windows, use `mvnw.cmd spring-boot:run` instead.
 
-The API starts on **http://localhost:8080**.
+The API starts on **http://localhost:8080**. Pagination is zero-based: `page=0` is the first page.
 
 ### Frontend
 
@@ -142,7 +142,7 @@ H2 console connection: JDBC URL `jdbc:h2:mem:taskdb`, username `sa`, no password
 3. Select a status from the dropdown — results should filter further.
 4. Try the API directly:
    ```bash
-   curl "http://localhost:8080/api/tasks?q=api&page=1&pageSize=5"
+   curl "http://localhost:8080/api/tasks?q=api&page=0&pageSize=5"
    ```
 
 ---
